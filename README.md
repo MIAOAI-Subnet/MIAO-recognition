@@ -11,11 +11,29 @@
 
 #  Introduction
 
-“MIAO” is the expression of a cat’s bark. We are developing an AI project designed to analyze and mimic canine behavior. By collecting dog barks uploaded by users, we aim to build a large-scale model to analyze dogs emotions and predict their behaviors, fostering a closer emotional bond between humans and dogs. We hope to encourage people around the world to form deeper connections with dogs. In the future, we look forward to expanding miao AI's capabilities to provide more personalized interactions, enhance pet care, and revolutionize how we communicate with our furry companions. miao miao!
+MIAOAI is a cat-themed AI-MEME subnet dedicated to creating and interacting with cat-inspired audio content, fostering a playful and entertaining decentralized community for cat lovers and meme enthusiasts.
+
+#  Overview
+This repository powers MIAOAI's ability to generate and manipulate cat vocalizations (e.g., meows, purrs, hisses) for interactive and entertainment purposes. Integrated into the MIAOAI DApp, it allows users to create cat sounds, interact with virtual cat agents, and share meme-worthy audio content, all while earning $MIAO tokens as rewards.
+
+Key Features
+-  Cat Sound Generation: Synthesize unique cat vocalizations based on user inputs or emotional prompts (e.g., "playful meow," "curious purr"), creating personalized cat audio clips.
+-  Interactive Virtual Cats: Generate digital cat agents that "speak" using synthesized sounds, enabling fun interactions in AR environments, social platforms, or virtual pet games.
+-  Meme Audio Creation: Transform user-uploaded audio (e.g., songs, speech) into cat-themed versions using style transfer, perfect for sharing on platforms like X and Instagram.
+-  Community Rewards: Earn 10-50 $MIAO tokens per generated audio clip or interaction, with additional bonuses for social media engagement (e.g., likes, shares).
 
 
-# Dog Barking Sound Recognition System
-This system is designed to demonstrate how to accurately recognize dog barking sounds in audio data using advanced audio recognition techniques. The system adopts the most cutting-edge algorithms in the field of deep learning and is optimized for the characteristics of dog barking, which can efficiently and accurately recognize dog barking in complex environments.
+# Model Architecture
+MIAOAI's audio generation and interaction system is built on advanced audio synthesis and processing techniques:
+-  WaveNet: A generative model for producing realistic cat vocalizations, trained on a diverse dataset of cat sounds to capture nuances like pitch and tone.
+-  Audio Style Transfer with GANs: Uses Generative Adversarial Networks to transform user audio into cat-like sounds, preserving the rhythm while infusing feline characteristics.
+-  Emotion-Driven Synthesis: Incorporates a lightweight emotion encoder to adjust generated sounds based on user-selected moods (e.g., happy, curious, sleepy).
+
+
+
+### Dataset
+-  Cat Vocalization Library: A curated collection of cat sounds (meows, purrs, hisses) gathered from user uploads via the MIAOAI DApp, categorized by emotional context.
+-  Synthetic Samples: Augmented audio generated through WaveNet to expand the dataset, ensuring variety in pitch, tone, and background noise for realistic synthesis.
 
 
 ### Core algorithm
