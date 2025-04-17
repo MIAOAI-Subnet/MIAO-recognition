@@ -101,11 +101,11 @@ async def predict(file: UploadFile = File(...)):
             output = model(mel_spec)
             probability = output.item()
 
-        # Determine whether it is a dog barking
+        # Determine whether it is a miao
         if probability > 0.9997:
-            result = "dog bark"
+            result = "miao"
         else:
-            result = "not dog bark"
+            result = "not miao"
 
         return JSONResponse({"result": result, "probability": probability})
 
