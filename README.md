@@ -11,14 +11,14 @@
 
 # Model Architecture
 MIAOAI's audio generation and interaction system is built on advanced audio synthesis and processing techniques:
--  WaveNet: A generative model for producing realistic cat vocalizations, trained on a diverse dataset of cat sounds to capture nuances like pitch and tone.
--  Audio Style Transfer with GANs: Uses Generative Adversarial Networks to transform user audio into cat-like sounds, preserving the rhythm while infusing feline characteristics.
+-  WaveNet: A generative model for producing realistic animal vocalizations, trained on a diverse dataset of cat sounds to capture nuances like pitch and tone.
+-  Audio Style Transfer with GANs: Uses Generative Adversarial Networks to transform user audio into animal-like sounds, preserving the rhythm while infusing feline characteristics.
 -  Emotion-Driven Synthesis: Incorporates a lightweight emotion encoder to adjust generated sounds based on user-selected moods (e.g., happy, curious, sleepy).
 
 
 
 ### Dataset
--  Cat Vocalization Library: A curated collection of cat sounds (meows, purrs, hisses) gathered from user uploads via the MIAOAI DApp, categorized by emotional context.
+-  animal-sound Vocalization Library: A curated collection of animal sounds collect from miners.
 -  Synthetic Samples: Augmented audio generated through WaveNet to expand the dataset, ensuring variety in pitch, tone, and background noise for realistic synthesis.
 
 
