@@ -9,20 +9,6 @@
 
 </div>
 
-#  Introduction
-
-MIAOAI is a cat-themed AI-MEME subnet dedicated to creating and interacting with cat-inspired audio content, fostering a playful and entertaining decentralized community for cat lovers and meme enthusiasts.
-
-#  Overview
-This repository powers MIAOAI's ability to generate and manipulate cat vocalizations (e.g., meows, purrs, hisses) for interactive and entertainment purposes. Integrated into the MIAOAI DApp, it allows users to create cat sounds, interact with virtual cat agents, and share meme-worthy audio content, all while earning $MIAO tokens as rewards.
-
-Key Features
--  Cat Sound Generation: Synthesize unique cat vocalizations based on user inputs or emotional prompts (e.g., "playful meow," "curious purr"), creating personalized cat audio clips.
--  Interactive Virtual Cats: Generate digital cat agents that "speak" using synthesized sounds, enabling fun interactions in AR environments, social platforms, or virtual pet games.
--  Meme Audio Creation: Transform user-uploaded audio (e.g., songs, speech) into cat-themed versions using style transfer, perfect for sharing on platforms like X and Instagram.
--  Community Rewards: Earn 10-50 $MIAO tokens per generated audio clip or interaction, with additional bonuses for social media engagement (e.g., likes, shares).
-
-
 # Model Architecture
 MIAOAI's audio generation and interaction system is built on advanced audio synthesis and processing techniques:
 -  WaveNet: A generative model for producing realistic cat vocalizations, trained on a diverse dataset of cat sounds to capture nuances like pitch and tone.
