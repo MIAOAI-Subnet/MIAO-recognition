@@ -35,40 +35,40 @@ class AudioDataset(Dataset):
         )
         self.amplitude_to_db = torchaudio.transforms.AmplitudeToDB(top_db=80)
 
-        # 增强数据增强的强度和种类
-        self.time_masking = torchaudio.transforms.TimeMasking(time_mask_param=150)  # 增加遮蔽范围
-        self.freq_masking = torchaudio.transforms.FrequencyMasking(freq_mask_param=50)  # 增加遮蔽范围
+        
+        self.time_masking = torchaudio.transforms.TimeMasking(time_mask_param=150)  
+        self.freq_masking = torchaudio.transforms.FrequencyMasking(freq_mask_param=50)  
         
     def apply_augmentation(self, waveform):
-        # 随机音量调整 - 增强强度
-        if torch.rand(1) > 0.2:  # 增加应用概率
-            volume_factor = 0.3 + torch.rand(1) * 1.4  # 扩大范围到0.3-1.7
+        
+        if torch.rand(1) > 0.2:  
+            volume_factor = 0.3 + torch.rand(1) * 1.4  
             waveform = waveform * volume_factor
 
-        # 添加随机噪声 - 增强强度
-        if torch.rand(1) > 0.2:  # 增加应用概率
-            noise = torch.randn_like(waveform) * (0.005 + torch.rand(1) * 0.01)  # 动态噪声强度
+        
+        if torch.rand(1) > 0.2:  
+            noise = torch.randn_like(waveform) * (0.005 + torch.rand(1) * 0.01)  
             waveform = waveform + noise
         
-        # 随机时间拉伸（模拟速度变化）
+        
         if torch.rand(1) > 0.5:
-            stretch_factor = 0.8 + torch.rand(1) * 0.4  # 0.8-1.2的伸缩系数
+            stretch_factor = 0.8 + torch.rand(1) * 0.4  
             orig_len = waveform.shape[1]
             stretched_len = int(orig_len * stretch_factor)
             
-            # 进行插值
+         
             if stretched_len > orig_len:
-                # 拉伸（变慢）
+                
                 indices = torch.linspace(0, orig_len-1, stretched_len)
                 indices = indices.to(torch.int64)
                 waveform_stretched = torch.zeros((1, stretched_len), device=waveform.device)
                 for i in range(stretched_len):
                     src_idx = min(indices[i], orig_len-1)
                     waveform_stretched[0, i] = waveform[0, src_idx]
-                # 截断到原始长度
+               
                 waveform = waveform_stretched[:, :orig_len]
             else:
-                # 压缩（变快）
+                
                 indices = torch.linspace(0, stretched_len-1, orig_len)
                 indices = indices.to(torch.int64)
                 waveform_compressed = torch.zeros_like(waveform)
@@ -94,7 +94,7 @@ class AudioDataset(Dataset):
             resampler = torchaudio.transforms.Resample(orig_freq=sr, new_freq=16000) 
             waveform = resampler(waveform)  
         
-        # 应用数据增强
+       
         if self.augment:
             waveform = self.apply_augmentation(waveform)
         
@@ -113,8 +113,7 @@ class AudioDataset(Dataset):
             mel_spec_db = torch.nn.functional.pad(mel_spec_db, (0, padding))  
         else:
             mel_spec_db = mel_spec_db[:, :, :self.target_length]  
-        
-        # 应用频谱增强
+       
         if self.augment:
             mel_spec_db = self.freq_masking(mel_spec_db)
             mel_spec_db = self.time_masking(mel_spec_db)
@@ -129,26 +128,26 @@ class ASTModelWrapper(nn.Module):
     def __init__(self, num_classes=1):
         super(ASTModelWrapper, self).__init__()  
         
-        # 使用更小的模型以减少过拟合
+       
         self.ast = ASTModel(
             label_dim=num_classes,  
-            fstride=10,  # 降低步长以提高特征分辨率
+            fstride=10,  
             tstride=10,  
             input_fdim=128,  
             input_tdim=512,  
             imagenet_pretrain=False,
             audioset_pretrain=False,
-            model_size='tiny224'  # 使用小型模型
+            model_size='tiny224'  
         )
         
-        # 增加Dropout以减少过拟合
-        self.dropout = nn.Dropout(0.5)  # 增加dropout率
-        # 不使用Sigmoid，由loss函数处理
+      
+        self.dropout = nn.Dropout(0.5)  
+        
         
     def forward(self, x):
         x = self.ast(x)
         x = self.dropout(x)
-        return x  # 返回原始logits，不应用sigmoid
+        return x  
 
 def find_best_threshold(val_loader, model, device):
     model.eval()
@@ -166,18 +165,18 @@ def find_best_threshold(val_loader, model, device):
     all_probs = np.array(all_probs)
     all_labels = np.array(all_labels)
     
-    # 计算PR曲线和ROC曲线
+    
     precision, recall, thresholds_pr = precision_recall_curve(all_labels, all_probs)
     fpr, tpr, thresholds_roc = roc_curve(all_labels, all_probs)
     
-    # 计算F1分数
+    
     f1_scores = 2 * (precision * recall) / (precision + recall + 1e-8)
     best_threshold = thresholds_pr[np.argmax(f1_scores)]
     
-    # 计算AUC
+    
     roc_auc = auc(fpr, tpr)
     
-    # 计算在最佳阈值下的指标
+    
     predictions = (all_probs > best_threshold).astype(int)
     true_positives = np.sum((predictions == 1) & (all_labels == 1))
     false_positives = np.sum((predictions == 1) & (all_labels == 0))
@@ -214,24 +213,24 @@ def load_audio_files():
     labels = []
     invalid_files = []
     
-    # 从 miao 文件夹加载猫叫声（标签为1）
+   
     miao_dir = os.path.join(audio_dir, 'miao')
     if os.path.exists(miao_dir):
         for file in glob.glob(os.path.join(miao_dir, '*.wav')):
             try:
-                # 尝试加载文件以验证其格式
+                
                 waveform, sr = torchaudio.load(file)
                 audio_files.append(file)
                 labels.append(1)
             except Exception as e:
                 invalid_files.append((file, str(e)))
     
-    # 从 other 文件夹加载其他声音（标签为0）
+    
     other_dir = os.path.join(audio_dir, 'other')
     if os.path.exists(other_dir):
         for file in glob.glob(os.path.join(other_dir, '*.wav')):
             try:
-                # 尝试加载文件以验证其格式
+                
                 waveform, sr = torchaudio.load(file)
                 audio_files.append(file)
                 labels.append(0)
@@ -247,7 +246,7 @@ def load_audio_files():
     return audio_files, labels
 
 if __name__ == "__main__":  
-    # 加载音频文件和标签
+    
     audio_files, labels = load_audio_files()
     
     if not audio_files:
@@ -260,31 +259,31 @@ if __name__ == "__main__":
     print(f"Cat sounds (label 1): {sum(labels)}")
     print(f"Other sounds (label 0): {len(labels) - sum(labels)}")
     
-    # 计算类别权重来处理数据不平衡
+    
     num_samples = len(labels)
     num_cat = sum(labels)
     num_other = num_samples - num_cat
-    # 显著增加猫叫声样本的权重，从原来的比例提高到10倍
+    
     pos_weight = torch.tensor([10.0 * num_other / num_cat]).to(device)
     print(f"类别权重 - 猫叫声样本权重: {pos_weight.item():.2f}倍")
     
-    # 分割训练集和验证集
+    
     train_files, val_files, train_labels, val_labels = train_test_split(
         audio_files, labels, test_size=0.2, random_state=42, stratify=labels  
     )
     
-    # 创建数据加载器，训练集使用数据增强
+    
     train_dataset = AudioDataset(train_files, train_labels, augment=True)  
     val_dataset = AudioDataset(val_files, val_labels, augment=False)  
-    train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)  # 减小批次大小
+    train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)  
     val_loader = DataLoader(val_dataset, batch_size=4, shuffle=False)  
 
-    # 创建并训练模型
+    
     model = ASTModelWrapper().to(device)  
-    # 使用BCEWithLogitsLoss，它内置了sigmoid函数并且数值稳定性更好
+    
     criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)  
     
-    # 使用更保守的优化器设置
+    
     optimizer = torch.optim.AdamW(model.parameters(), lr=5e-5, weight_decay=0.05)  
     
     scheduler = torch.optim.lr_scheduler.OneCycleLR(
@@ -292,9 +291,9 @@ if __name__ == "__main__":
         max_lr=1e-4,
         epochs=50,
         steps_per_epoch=len(train_loader),
-        pct_start=0.2,  # 增加预热阶段
-        div_factor=25,  # 初始学习率 = max_lr/div_factor
-        final_div_factor=1000,  # 最终学习率 = max_lr/(div_factor*final_div_factor)
+        pct_start=0.2,  
+        div_factor=25,  
+        final_div_factor=1000,  
     )
     
     scaler = GradScaler()
@@ -361,7 +360,7 @@ if __name__ == "__main__":
         train_loss /= len(train_loader.dataset)
         train_acc = train_correct / train_total
         
-        # 验证阶段
+        
         model.eval()
         val_loss = 0.0
         val_metrics = None
@@ -381,7 +380,7 @@ if __name__ == "__main__":
         
         val_loss /= len(val_loader.dataset)
         
-        # 计算验证集上的详细指标
+        
         val_metrics = find_best_threshold(val_loader, model, device)
         
         print(f'\nEpoch {epoch+1} Summary:')
@@ -395,7 +394,7 @@ if __name__ == "__main__":
         print(f'- Precision: {val_metrics["precision"]:.4f}')
         print(f'- Best Threshold: {val_metrics["threshold"]:.4f}')
 
-        # 保存最佳模型
+        
         if val_metrics["f1_score"] > best_val_metrics["f1_score"]:
             best_val_metrics = val_metrics
             os.makedirs('models', exist_ok=True)
@@ -411,7 +410,7 @@ if __name__ == "__main__":
             no_improve_epochs += 1
             print(f'\nNo improvement for {no_improve_epochs} epochs')
             
-        # 早停
+       
         if no_improve_epochs >= patience:
             print(f'\nEarly stopping after {epoch+1} epochs')
             break
